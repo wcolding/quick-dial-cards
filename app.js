@@ -21,24 +21,35 @@
     function showModels(b) {
         var m = $('#models'); m.innerHTML = '';
         var back = document.createElement('button'); back.className = 'backrow'; back.textContent = '← All brands';
-        back.onclick = function () { m.hidden = true; bx.hidden = false; $('.bigask').hidden = false; $('.reassure').hidden = false; };
+        back.onclick = function () { m.hidden = true; bx.hidden = false; $('.bigask').hidden = false; $$('.reassure').forEach(function (x) { x.hidden = false }); };
         m.appendChild(back);
         brands[b].forEach(function (c) { m.appendChild(modelBtn(c)) });
-        bx.hidden = true; $('.bigask').hidden = true; $('.reassure').hidden = true; m.hidden = false;
+        bx.hidden = true; $('.bigask').hidden = true; $$('.reassure').forEach(function (x) { x.hidden = true }); m.hidden = false;
     }
 
     /* search */
     var idx = cards.map(function (c) { return { c: c, t: (c.dataset.title || '').toLowerCase(), all: c.textContent.toLowerCase() } });
     $('#q').addEventListener('input', function () {
         var q = this.value.trim().toLowerCase(), r = $('#results');
-        if (!q) { r.hidden = true; bx.hidden = false; $('.bigask').hidden = false; $('.reassure').hidden = false; $('#models').hidden = true; return; }
+        if (!q) { r.hidden = true; bx.hidden = false; $('.bigask').hidden = false; $$('.reassure').forEach(function (x) { x.hidden = false }); $('#models').hidden = true; return; }
         var hits = idx.filter(function (e) { return e.t.indexOf(q) > -1 });
         if (hits.length < 6) idx.forEach(function (e) { if (e.t.indexOf(q) === -1 && e.all.indexOf(q) > -1 && hits.indexOf(e) === -1) hits.push(e); });
         r.innerHTML = '';
         if (!hits.length) { r.innerHTML = '<p class="nores">No match — try part of the model name (e.g. “ULX”, “6000”), or <a href="https://github.com/gothamsound/quick-dial-cards/issues/new?template=new-system.yml" target="_blank" rel="noopener">request this system</a>.</p>'; }
         hits.slice(0, 8).forEach(function (e) { r.appendChild(modelBtn(e.c)) });
-        bx.hidden = true; $('.bigask').hidden = true; $('.reassure').hidden = true; $('#models').hidden = true; r.hidden = false;
+        bx.hidden = true; $('.bigask').hidden = true; $$('.reassure').forEach(function (x) { x.hidden = true }); $('#models').hidden = true; r.hidden = false;
     });
+
+    function goHome() {
+        var q = document.getElementById('q'); q.value = '';
+        document.getElementById('results').hidden = true; document.getElementById('models').hidden = true;
+        bx.hidden = false; document.querySelector('.bigask').hidden = false;
+        var rs = document.querySelectorAll('.reassure'); for (var i = 0; i < rs.length; i++) rs[i].hidden = false;
+        if (location.hash) location.hash = ''; else { document.getElementById('home').hidden = false; }
+        window.scrollTo(0, 0);
+    }
+    document.getElementById('homebtn').onclick = goHome;
+    document.querySelector('header a[aria-label="Home"]').onclick = function (e) { e.preventDefault(); goHome(); };
 
     /* routing */
     var wrap = $('#cardwrap'), home = $('#home'), current = null;
@@ -55,6 +66,7 @@
         cards.forEach(function (x) { x.hidden = true });
         if (c && c.classList.contains('card')) {
             c.hidden = false; current = c; home.hidden = true; wrap.hidden = false; document.body.classList.add('in-card');
+            wrap.classList.toggle('no-seg', !c.querySelector('.procs'));
             var kt = c.querySelector('.proc.tx .proc-k'), kr = c.querySelector('.proc.rx .proc-k');
             var dt = kt && kt.textContent !== 'TRANSMITTER', dr = kr && kr.textContent !== 'PORTABLE RECEIVER' && kr.textContent !== 'RECEIVER (RACK)';
             document.getElementById('seg-tx').innerHTML = dt ? kt.textContent : 'TX — Transmitter<small>beltpack / handheld</small>';

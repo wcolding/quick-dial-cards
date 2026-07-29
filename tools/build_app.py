@@ -8,10 +8,10 @@ rewrites procedures. Edit print.html (via the normal deck pipeline), then run:
 import re, html, pathlib, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-src = (ROOT / "print.html").read_text()
+src = (ROOT / "print.html").read_text(encoding='utf-8')
 
 BRANDS = ["Sennheiser", "Shure", "Sony", "Wisycom", "Lectrosonics",
-          "Comtek", "Sound Devices", "Zaxcom"]
+          "Comtek", "Sound Devices", "Zaxcom", "Teradek"]
 
 def slugify(t):
     t = re.sub(r"&[a-z]+;", " ", t)
@@ -21,19 +21,20 @@ cards = []
 for sheet in src.split('<section class="sheet">')[1:]:
     h1 = re.search(r"<h1>(.*?)</h1>", sheet, re.S).group(1)
     h1 = re.sub(r"\s+", " ", h1).strip()
+    h1 = html.unescape(h1)
     if h1.startswith("Wireless Quick-Dial"):
         continue  # index/legend page — the app home replaces it
     subm = re.search(r'<div class="sub">(.*?)</div>', sheet, re.S)
     sub = re.sub(r"\s+", " ", subm.group(1)).strip() if subm else ""
     body = re.search(r'(<div class="meta">.*?)\s*<footer class="foot">', sheet, re.S).group(1)
-    brand = next(b for b in BRANDS if h1.startswith(b))
-    model = h1[len(brand):].strip()
+    brand = next((b for b in BRANDS if h1.startswith(b)), 'Reference')
+    model = h1[len(brand):].strip() if brand != 'Reference' else h1
     badge = re.search(r'<span class="tag ([a-z-]+)">([^<]*)</span>', body)
     cards.append(dict(slug=slugify(h1), title=h1, brand=brand, model=model,
                       sub=sub, body=body,
                       badgecls=badge.group(1), badgetxt=badge.group(2)))
 
-assert len(cards) == 22, f"expected 16 cards, got {len(cards)}"
+assert len(cards) == 25, f"expected 16 cards, got {len(cards)}"
 
 ISSUE = "https://github.com/gothamsound/quick-dial-cards/issues/new"
 sections = []
@@ -46,8 +47,8 @@ for c in cards:
 <div class="cardfoot"><a href="{fix}" target="_blank" rel="noopener">Something wrong on this card? Suggest a fix →</a><br>No GitHub account (you really should)? <a href="mailto:peters@gothamsound.com?subject=quickdialchange&body={mailbody}">Email it here</a>.</div>
 </section>''')
 
-page = (ROOT / "template.html").read_text()
+page = (ROOT / "template.html").read_text(encoding='utf-8')
 
 out = page.replace("@@SECTIONS@@", "\n".join(sections))
-(ROOT / "index.html").write_text(out)
+(ROOT / "index.html").write_text(out, encoding='utf-8')
 print(f"wrote index.html ({len(out)//1024} KB, {len(cards)} cards)")

@@ -21,6 +21,7 @@ for sheet in src.split('<section class="sheet">')[1:]:
     g = lambda pat: (lambda m: txt(m.group(1)) if m else '')(re.search(pat, sheet, re.S))
     def steps(cls):
         m = re.search(r'<div class="proc '+cls+r'">.*?<span class="proc-k">(.*?)</span>\s*<span class="proc-m">(.*?)</span>.*?<ol class="steps">(.*?)</ol>', sheet, re.S)
+        if not m: return '','',[]
         label = txt(m.group(1)); model = txt(m.group(2))
         st = [txt(x) for x in re.findall(r'<span class="txt">(.*?)</span></li>', m.group(3), re.S)]
         return label, model, st
@@ -34,9 +35,10 @@ for sheet in src.split('<section class="sheet">')[1:]:
         txk=txk, txm=txm, txsteps=txsteps, rxk=rxk, rxm=rxm, rxsteps=rxsteps,
         rfrows=[(txt(a),txt(b)) for a,b in re.findall(r'<div class="rf-row"><span class="rf-k[^"]*">(.*?)</span><span class="rf-v">(.*?)</span></div>', sheet, re.S)],
         watch=[txt(x) for x in re.findall(r'<div class="watch">.*?<ul>(.*?)</ul>', sheet, re.S)[0].split('</li>') if txt(x)] if '<div class="watch">' in sheet else [],
+        tables=[[[txt(cell) for cell in re.findall(r'<t[hd][^>]*>(.*?)</t[hd]>', row, re.S)] for row in re.findall(r'<tr[^>]*>(.*?)</tr>', tb, re.S)] for tb in re.findall(r'<table class="bandtable">(.*?)</table>', sheet, re.S)],
         sources=re.findall(r'<div class="sources">.*?</div>', sheet, re.S) and re.findall(r'<a href="([^"]+)">([^<]+)</a>', re.search(r'<div class="sources">(.*?)</div>', sheet, re.S).group(1)) or [],
     ))
-assert len(cards)==22
+assert len(cards)==25
 
 TABS = {'Sennheiser evolution G3 / G4':'Sennheiser ew G3-G4','Sennheiser Digital 6000':'Sennheiser D6000',
  'Sennheiser 2000 Series':'Sennheiser 2000','Sennheiser 3000 / 5000 Series':'Sennheiser 3000-5000',
@@ -46,7 +48,7 @@ TABS = {'Sennheiser evolution G3 / G4':'Sennheiser ew G3-G4','Sennheiser Digital
  'Lectrosonics IFB (IFBlue)':'Lectrosonics IFB','Lectrosonics Duet (M2T / M2Ra)':'Lectrosonics Duet',
  'Comtek 216 (BST-25 / PR-216)':'Comtek 216','Sound Devices Astral (A20)':'Sound Devices Astral',
  'Sennheiser EW-DX':'Sennheiser EW-DX','Shure SLX-D':'Shure SLX-D','Shure UHF-R':'Shure UHF-R',
- 'Lectrosonics D Squared (DBSM / DSQD)':'Lectrosonics D Squared','Zaxcom (ZMT4.5 / URX100)':'Zaxcom','Shure Wireless Workbench (WWB 6 & 7)':'Shure WWB'}
+ 'Lectrosonics D Squared (DBSM / DSQD)':'Lectrosonics D Squared','Zaxcom (ZMT4.5 / URX100)':'Zaxcom','Shure Wireless Workbench (WWB 6 & 7)':'Shure WWB','Teradek Bolt / Ranger (wireless video)':'Teradek','5 / 6 GHz Channel Chart (video & Wi-Fi)':'5-6 GHz Chart','2.4 GHz Auto-Hop Mics (DJI / Rode / Hollyland)':'2.4 GHz Auto-Hop'}
 
 INK='FF16181D'; OLIVE='FF6A6F33'; MUT='FF4A4F57'; FILL=PatternFill('solid', fgColor='FFF6F6F1')
 def style(ws,cell,sz=10,b=False,color=INK,wrap=True,fill=False):
@@ -90,6 +92,7 @@ for c in cards:
         ws.merge_cells(f'B{r}:E{r}')
     r=10
     for label,model,st in [(c['txk'],c['txm'],c['txsteps']),(c['rxk'],c['rxm'],c['rxsteps'])]:
+        if not st: continue
         style(ws,f'A{r}',10,True,OLIVE,fill=True).value=f'{label}  -  {model}'
         ws.merge_cells(f'A{r}:E{r}'); r+=1
         for col,h in zip(['A','B','C','D','E'],['Device','Model','Step','Instruction','Notes / Corrections']):
@@ -100,6 +103,14 @@ for c in cards:
                 style(ws,f'A{r}',b=True).value=label.title()
                 style(ws,f'B{r}').value=model
             style(ws,f'C{r}').value=i; style(ws,f'D{r}').value=stx
+            r+=1
+        r+=1
+    for tb in c.get('tables',[]):
+        for ri,row in enumerate(tb):
+            for ci,cell in enumerate(row):
+                st_=style(ws,f'{get_column_letter(ci+1)}{r}',9,ri==0,MUT if ri else 'FFFFFFFF')
+                st_.value=cell
+                if ri==0: ws[f'{get_column_letter(ci+1)}{r}'].fill=PatternFill('solid',fgColor=INK)
             r+=1
         r+=1
     style(ws,f'A{r}',10,True,OLIVE).value='RF POWER & SAFE POWER-ON'; r+=1
