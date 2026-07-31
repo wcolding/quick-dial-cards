@@ -8,7 +8,7 @@ rewrites procedures. Edit print.html (via the normal deck pipeline), then run:
 import re, html, pathlib, urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-src = (ROOT / "print.html").read_text(encoding='utf-8')
+src = (ROOT / "print.html").read_text(encoding='utf-8').replace('\n', '')
 
 BRANDS = ["Sennheiser", "Shure", "Sony", "Wisycom", "Lectrosonics",
           "Comtek", "Sound Devices", "Zaxcom", "Teradek"]

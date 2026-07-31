@@ -6,7 +6,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-src = (ROOT/'print.html').read_text(encoding='utf-8')
+src = (ROOT/'print.html').read_text(encoding='utf-8').replace('\n', '')
 
 def txt(h):
     h = re.sub(r'<kbd>(.*?)</kbd>', r'[\1]', h)
