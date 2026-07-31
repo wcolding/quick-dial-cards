@@ -11,33 +11,25 @@
 <body>
     <header>
         <a href="#" aria-label="Home"><img src="assets/gotham-logo.png" alt="Gotham Sound"></a>
-        <button id="homebtn" type="button" aria-label="Home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"
-                stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <button id="homebtn" type="button" aria-label="Home">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">           
                 <path d="M3 10.5 12 3l9 7.5" />
                 <path d="M5.5 9.5V21h13V9.5" />
-            </svg><span>Home</span></button>
-        <input id="q" type="search" autocomplete="off" placeholder="Search model — ULX-D, 6000, A20…"
-            aria-label="Search systems">
+            </svg>
+            <span>Home</span>
+        </button>
+        <input id="q" type="search" autocomplete="off" placeholder="Search model — ULX-D, 6000, A20…" aria-label="Search systems">
     </header>
     <main>
         <div id="home">
             <div id="lastused"></div>
             <h1 class="bigask">Pick the brand written on your transmitter</h1>
-            <p class="reassure">Have your assigned frequency ready (e.g. <b>541.200&nbsp;MHz</b>) — the card walks you
-                through dialing it, step by step.</p>
-            <p class="reassure" style="font-size:.88rem">This deck is a <b>community effort</b> — corrections come in
-                from working coordinators and crews and are verified against the manufacturer manuals before publishing.
-            </p>
+            <p class="reassure">Have your assigned frequency ready (e.g. <b>541.200&nbsp;MHz</b>) — the card walks you through dialing it, step by step.</p>
+            <p class="reassure" style="font-size:.88rem">This deck is a <b>community effort</b> — corrections come in from working coordinators and crews and are verified against the manufacturer manuals before publishing.</p>
             <div id="brands"></div>
             <div id="models" hidden></div>
             <div id="results" hidden></div>
-            <p class="homefoot">Working from paper? <a href="print.html">Printable deck</a> · <a
-                    href="quick-dial-cards.pdf">PDF</a> · <a href="quick-dial-cards-editable.xlsx">Editable XLSX</a><br>
-                Maintained by <a href="https://gothamsound.com">Gotham Sound</a>. Spot an error? <a
-                    href="https://github.com/gothamsound/quick-dial-cards/issues/new/choose">Suggest a change</a> — or
-                if you don't have a GitHub account (you really should), <a
-                    href="mailto:peters@gothamsound.com?subject=quickdialchange">email it here</a>. Contributors are
-                credited in the README — tell us if you&rsquo;d like that (or prefer not).</p>
+            <p class="homefoot">Working from paper? <a href="print.html">Printable deck</a> · <a href="quick-dial-cards.pdf">PDF</a> · <a href="quick-dial-cards-editable.xlsx">Editable XLSX</a><br> Maintained by <a href="https://gothamsound.com">Gotham Sound</a>. Spot an error? <a href="https://github.com/gothamsound/quick-dial-cards/issues/new/choose">Suggest a change</a> — or if you don't have a GitHub account (you really should), <a href="mailto:peters@gothamsound.com?subject=quickdialchange">email it here</a>. Contributors are credited in the README — tell us if you&rsquo;d like that (or prefer not).</p>
         </div>
         <div id="cardwrap" hidden>
             <div class="cardbar">
@@ -52,8 +44,7 @@
             @@SECTIONS@@
         </div>
     </main>
-    <a class="suggest-fab" href="https://github.com/gothamsound/quick-dial-cards/issues/new/choose" target="_blank"
-        rel="noopener">Suggest a change</a>
+    <a class="suggest-fab" href="https://github.com/gothamsound/quick-dial-cards/issues/new/choose" target="_blank" rel="noopener">Suggest a change</a>
     <script src="app.js"></script>
 </body>
 
