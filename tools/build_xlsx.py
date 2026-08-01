@@ -31,7 +31,7 @@ for sheet in src.split('<section class="sheet">')[1:]:
         badge=g(r'<span class="tag [a-z- ]+">(.*?)</span>'),
         step=g(r'<span class="pill"><b>Step</b>(.*?)</span>'),
         rng=g(r'<span class="pill"><b>Range</b>(.*?)</span>'),
-        match=g(r'<div class="linkbar"><span class="lk-t">MATCHING TX &amp; RX</span><span>(.*?)</span></div>'),
+        match=g(r'<span class="lk-t">MATCHING TX &amp; RX</span><span>(.*?)</span>'),
         txk=txk, txm=txm, txsteps=txsteps, rxk=rxk, rxm=rxm, rxsteps=rxsteps,
         rfrows=[(txt(a),txt(b)) for a,b in re.findall(r'<div class="rf-row"><span class="rf-k[^"]*">(.*?)</span><span class="rf-v">(.*?)</span></div>', sheet, re.S)],
         watch=[txt(x) for x in re.findall(r'<div class="watch">.*?<ul>(.*?)</ul>', sheet, re.S)[0].split('</li>') if txt(x)] if '<div class="watch">' in sheet else [],
