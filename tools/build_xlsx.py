@@ -33,7 +33,7 @@ for sheet in src.split('<section class="sheet">')[1:]:
         rng=g(r'<span class="pill"><b>Range</b>(.*?)</span>'),
         match=g(r'<span class="lk-t">MATCHING TX &amp; RX</span><span>(.*?)</span>'),
         txk=txk, txm=txm, txsteps=txsteps, rxk=rxk, rxm=rxm, rxsteps=rxsteps,
-        rfrows=[(txt(a),txt(b)) for a,b in re.findall(r'<div class="rf-row"><span class="rf-k[^"]*">(.*?)</span><span class="rf-v">(.*?)</span></div>', sheet, re.S)],
+        rfrows=[(txt(a),txt(b)) for a,b in re.findall(r'<span class="rf-k[^"]*">(.*?)</span><span class="rf-v">(.*?)</span>', sheet, re.S)],
         watch=[txt(x) for x in re.findall(r'<div class="watch">.*?<ul>(.*?)</ul>', sheet, re.S)[0].split('</li>') if txt(x)] if '<div class="watch">' in sheet else [],
         tables=[[[txt(cell) for cell in re.findall(r'<t[hd][^>]*>(.*?)</t[hd]>', row, re.S)] for row in re.findall(r'<tr[^>]*>(.*?)</tr>', tb, re.S)] for tb in re.findall(r'<table class="bandtable">(.*?)</table>', sheet, re.S)],
         sources=re.findall(r'<div class="sources">.*?</div>', sheet, re.S) and re.findall(r'<a href="([^"]+)">([^<]+)</a>', re.search(r'<div class="sources">(.*?)</div>', sheet, re.S).group(1)) or [],
